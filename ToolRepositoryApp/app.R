@@ -1,3 +1,5 @@
+library(googlesheets4)
+
 fieldsMandatory <- c("name","owner","currentuser","currentlocation")
 
 labelMandatory <- function(label) {
@@ -26,6 +28,15 @@ loadData <- function() {
     data <- lapply(files, read.csv, stringsAsFactors = FALSE)
     data <- dplyr::rbind_all(data)
     data
+}
+
+saveData <- function(data) {
+    fileName <- sprintf("%s_%s.csv",
+                        humanTime(),
+                        digest::digest(data))
+    
+    write.csv(x = data, file = file.path(responsesDir, fileName),
+              row.names = FALSE, quote = TRUE)
 }
 
 shinyApp(
@@ -88,14 +99,7 @@ shinyApp(
             data <- t(data)
             data
         })
-        saveData <- function(data) {
-            fileName <- sprintf("%s_%s.csv",
-                                humanTime(),
-                                digest::digest(data))
-            
-            write.csv(x = data, file = file.path(responsesDir, fileName),
-                      row.names = FALSE, quote = TRUE)
-        }
+       
         
         # action to take when submit button is pressed
         observeEvent(input$submit, {
