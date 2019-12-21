@@ -8,7 +8,7 @@ labelMandatory <- function(label) {
         span("*", class = "mandatory_star")
     )
 }
-
+#gffdsgfdsgdfs
 appCSS <- ".mandatory_star { color: red; }"
 
 fieldsAll <- c("name", "make", "model", "currentuser", "currentlocation","owner","notes")
