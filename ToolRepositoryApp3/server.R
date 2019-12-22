@@ -77,6 +77,23 @@ shinyServer(function(input, output) {
                   colnames = c("Manufacturer","Model","Name","Owner","Current User","Location","Notes"),
                   filter = "top"))
   
+  output$x5 = renderPrint({
+    cat('Rows on the current page:\n\n')
+    cat(input$tool_table_rows_current, sep = ', ')
+    cat('\n\nAll rows:\n\n')
+    cat(input$tool_table_rows_all, sep = ', ')
+    cat('\n\nSelected rows:\n\n')
+    print(input$tool_table_rows_selected)
+    cat(input$tool_table_rows_selected, sep = ', ')
+  })
+  
+  observe({toggleElement(id = "tooledit",condition = is.null(input$tool_table_rows_selected)==FALSE)
+  })
+  
+  
+  
+  
+  
   
   observeEvent(input$tool_create, {
     shinyjs::show("form")
