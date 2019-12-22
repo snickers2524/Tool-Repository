@@ -72,8 +72,11 @@ fields_updatetool<-c("tool_location","tool_user","tool_notes")
 shinyServer(function(input, output) {
   
   output$tool_table<-renderDataTable(
-    loadTable()
-  )
+    DT::datatable(loadTable(),
+                  selection = "single",
+                  colnames = c("Manufacturer","Model","Name","Owner","Current User","Location","Notes"),
+                  filter = "top"))
+  
   
   observeEvent(input$tool_create, {
     shinyjs::show("form")
