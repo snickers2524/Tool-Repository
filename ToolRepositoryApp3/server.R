@@ -69,10 +69,11 @@ fields_updatetool<-c("tool_location","tool_user","tool_notes")
 
 #################################################################################################
 
-shinyServer(function(input, output) {
+shinyServer(function(input, output,session) {
+  table<-loadTable()
   
   output$tool_table<-renderDataTable(
-    DT::datatable(loadTable(),
+    DT::datatable(table,
                   selection = "single",
                   colnames = c("Manufacturer","Model","Name","Owner","Current User","Location","Notes"),
                   filter = "top"))
@@ -84,10 +85,18 @@ shinyServer(function(input, output) {
     cat(input$tool_table_rows_all, sep = ', ')
     cat('\n\nSelected rows:\n\n')
     print(input$tool_table_rows_selected)
+    print(table[input$tool_table_rows_selected,]$tool_manufacturer)
     cat(input$tool_table_rows_selected, sep = ', ')
   })
   
   observe({toggleElement(id = "tooledit",condition = is.null(input$tool_table_rows_selected)==FALSE)
+  })
+  
+  observeEvent(is.null(input$tool_table_rows_selected)==FALSE,{
+    updateTextInput(session,"tool_manufacturer_edit",value=table[input$tool_table_rows_selected,]$tool_manufacturer)
+    updateTextInput(session,"tool_model_edit",value=table[input$tool_table_rows_selected,]$tool_model)
+    updateTextInput(session,"tool_name_edit",value=table[input$tool_table_rows_selected,]$tool_name)
+    updateCheckboxGroupInput(session,"tool_owner_edit",selected = table[input$tool_table_rows_selected,]$tool_owner)
   })
   
   
