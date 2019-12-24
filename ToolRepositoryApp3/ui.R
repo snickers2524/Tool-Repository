@@ -34,9 +34,12 @@ shinyUI(fluidPage(
           textInput("tool_manufacturer", "Manufacturer", ""),
           textInput("tool_model", "Model", ""),
           textInput("tool_name", labelMandatory("Name"), ""),
-          checkboxGroupInput("tool_owner",labelMandatory("Owner"),c("Leif","Mark","Zlatko","Sam"),inline = TRUE),
-          selectInput("tool_user",labelMandatory("Current User"),c("Aidan","Mark","Zlatko","Sam","Leif") ),
-          selectInput("tool_location",labelMandatory("Current Location"),c("Nanaimo Str.","Fifth Ave.","Dublin Str.") ),
+          selectInput("tool_owner",labelMandatory("Owner"),choices = c("")),
+          textInput("tool_owner_other",value = "",label = NULL),
+          selectInput("tool_user",labelMandatory("Current User"),choices = c("") ),
+          textInput("tool_user_other",value = "",label = NULL),
+          selectInput("tool_location",labelMandatory("Current Location"),choices = c("") ),
+          textInput("tool_location_other",value = "",label = NULL),
           textAreaInput("tool_notes","Notes",value=""),
           actionButton("submit", "Submit", class = "btn-primary")
         )
@@ -48,10 +51,15 @@ shinyUI(fluidPage(
           textInput("tool_manufacturer_edit", "Manufacturer", ""),
           textInput("tool_model_edit", "Model", ""),
           textInput("tool_name_edit", labelMandatory("Name"), ""),
-          checkboxGroupInput("tool_owner_edit",labelMandatory("Owner"),c("Leif","Mark","Zlatko","Sam"),inline = TRUE),
-          selectInput("tool_user_edit",labelMandatory("Current User"),c("Aidan","Mark","Zlatko","Sam","Leif") ),
-          selectInput("tool_location_edit",labelMandatory("Current Location"),c("Nanaimo Str.","Fifth Ave.","Dublin Str.") ),
-          textAreaInput("tool_notes_edit","Notes",value=""),
+          selectInput("tool_owner_edit",labelMandatory("Owner"),choices = c("")),
+          textInput("tool_owner_other_edit",value = "",label = NULL),
+          selectInput("tool_user_edit",labelMandatory("Current User"),choices = c("") ),
+          textInput("tool_user_other_edit",value = "",label = NULL),
+          selectInput("tool_location_edit",labelMandatory("Current Location"),choices = c("") ),
+          textInput("tool_location_other_edit",value = "",label = NULL),
+          h5(strong("Notes")),
+          textOutput("tool_notes_output"),
+          textAreaInput("tool_notes_edit",label = NULL,value=""),
           actionButton("submit_edit", "Submit", class = "btn-primary")
         )
       ),
@@ -71,7 +79,6 @@ shinyUI(fluidPage(
       verbatimTextOutput('x5')
     )
   )
-  
   
   
   

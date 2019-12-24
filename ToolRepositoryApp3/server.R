@@ -1,5 +1,7 @@
 library(shiny)
 library(readr)
+library(dplyr)
+library(lubridate)
 
 create_connection<-function(){
   library(RMySQL)
@@ -32,21 +34,14 @@ save_newtool<-function(table1,table2,data1,data2){
                    paste(names(data2),collapse = ", "),
                    paste(data2,collapse = "','"))
   
-  # query2<-str_c(query2,";",sep="")
-  # 
-  # query<-str_c(query1,
-  #              "select @tool_id := last_insert_id();",
-  #              query2,
-  #              sep = " ")
-  # print(query1)
-  
+
   dbSendQuery(con, query1)
   dbSendQuery(con, query2)
   dbDisconnect(con)
   
 }
 
-humanTime <- function() format(Sys.time(), "%Y%m%d %H:%M:%S")
+humanTime <- function(){x<-ymd_hms(Sys.time());x<-toString(x);return(x)}
 
 labelMandatory <- function(label) {
   tagList(
@@ -58,25 +53,84 @@ labelMandatory <- function(label) {
 loadTable<-function(){
   conn<-create_connection()
   
-  query <- "select t.tool_manufacturer, t.tool_model,t.tool_name,t.tool_owner,tc.tool_user,tc.tool_location,tc.tool_notes from tools as t inner join tools_current as tc on t.tool_ID=tc.tool_ID;"
+  query <- "SELECT 
+    t.tool_manufacturer,
+    t.tool_model,
+    t.tool_name,
+    t.tool_owner,
+    tc.tool_user,
+    tc.tool_location,
+    tc.tool_ID,
+    group_concat(tc.tool_notes separator ' - ') as tool_notes
+FROM
+    tools AS t
+        INNER JOIN
+    tools_current AS tc ON t.tool_ID = tc.tool_ID
+group by t.tool_ID
+order by tc.tool_date;"
   data<-dbGetQuery(conn, query)
   data
+}
+
+cols_specific <- function(table,col){
+  x<-table %>% select(col) %>% distinct()
+  x<-c(x[[1:length(x)]],"other")
+  return(x)
 }
 
 fieldsMandatory <- c("tool_name","tool_owner","tool_user","tool_location")
 fields_newtool<-c("tool_name","tool_manufacturer","tool_model","tool_owner")
 fields_updatetool<-c("tool_location","tool_user","tool_notes")
 
+fields_newtool2<-c("tool_name_edit","tool_manufacturer_edit","tool_model_edit","tool_owner_edit")
+fields_updatetool2<-c("tool_location_edit","tool_user_edit","tool_notes_edit")
+
+save_UpdatedtoolData<-function(table1 = "tools",table2="tools_current",data2){
+  
+ 
+  
+  con<-create_connection()
+  
+  
+  
+  # query1<- sprintf("insert into %s (%s) values ('%s')",
+  #                  table1,
+  #                  paste(names(data1),collapse = ", "),
+  #                  paste(data1,collapse = "','"))
+  # 
+  # query1<-str_c(query1,";",sep="")
+  update_fieldname<-fields_updatetool
+  update_fieldname<-c(update_fieldname,"tool_date","tool_ID")
+  print(update_fieldname)
+  
+  query2<- sprintf("insert into %s (%s) values ('%s')",
+                   table2,
+                   paste(update_fieldname,collapse = ", "),
+                   paste(data2,collapse = "','"))
+  
+  print(query2)
+  
+  
+  # dbSendQuery(con, query1)
+  dbSendQuery(con, query2)
+  dbDisconnect(con)
+
+}
+
 #################################################################################################
 
 shinyServer(function(input, output,session) {
   table<-loadTable()
+  print(fields_updatetool2)
+  
+  updateSelectInput(session,"tool_owner",selected = cols_specific(table,"tool_owner"))
   
   output$tool_table<-renderDataTable(
-    DT::datatable(table,
+    DT::datatable(table[-7],
                   selection = "single",
-                  colnames = c("Manufacturer","Model","Name","Owner","Current User","Location","Notes"),
-                  filter = "top"))
+                  # colnames = c("Manufacturer","Model","Name","Owner","Current User","Location","Notes"),
+                  filter = "top")
+                  )
   
   output$x5 = renderPrint({
     cat('Rows on the current page:\n\n')
@@ -84,10 +138,11 @@ shinyServer(function(input, output,session) {
     cat('\n\nAll rows:\n\n')
     cat(input$tool_table_rows_all, sep = ', ')
     cat('\n\nSelected rows:\n\n')
-    print(input$tool_table_rows_selected)
-    print(table[input$tool_table_rows_selected,]$tool_manufacturer)
+    print(humanTime())
     cat(input$tool_table_rows_selected, sep = ', ')
   })
+  
+  # Tool Edit Stuff
   
   observe({toggleElement(id = "tooledit",condition = is.null(input$tool_table_rows_selected)==FALSE)
   })
@@ -96,16 +151,43 @@ shinyServer(function(input, output,session) {
     updateTextInput(session,"tool_manufacturer_edit",value=table[input$tool_table_rows_selected,]$tool_manufacturer)
     updateTextInput(session,"tool_model_edit",value=table[input$tool_table_rows_selected,]$tool_model)
     updateTextInput(session,"tool_name_edit",value=table[input$tool_table_rows_selected,]$tool_name)
-    updateCheckboxGroupInput(session,"tool_owner_edit",selected = table[input$tool_table_rows_selected,]$tool_owner)
+    updateSelectInput(session,"tool_owner_edit",choices = cols_specific(table,"tool_owner"),selected = table[input$tool_table_rows_selected,]$tool_owner)
+    updateSelectInput(session,"tool_user_edit",choices = cols_specific(table,"tool_user"),selected = table[input$tool_table_rows_selected,]$tool_user)
+    updateSelectInput(session,"tool_location_edit",choices = cols_specific(table,"tool_location"),selected = table[input$tool_table_rows_selected,]$tool_location)
+    output$tool_notes_output<-renderText(table[input$tool_table_rows_selected,]$tool_notes)
   })
   
+  observe({toggleElement(id = "tool_owner_other_edit",condition = input$tool_owner_edit=="other")
+  })
   
+  observe({toggleElement(id = "tool_user_other_edit",condition = input$tool_user_edit=="other")
+  })
   
+  observe({toggleElement(id = "tool_location_other_edit",condition = input$tool_location_edit=="other")
+  })
   
+  observeEvent(input$submit_edit,{
+    save_UpdatedtoolData(table2="tools_current",data2 = data_newtool_updatetool2())
+  })
+
+  
+  # New Tool Stuff
   
   
   observeEvent(input$tool_create, {
+    updateSelectInput(session,"tool_owner",choices = cols_specific(table,"tool_owner"))
+    updateSelectInput(session,"tool_user",choices = cols_specific(table,"tool_user"))
+    updateSelectInput(session,"tool_location",choices = cols_specific(table,"tool_location"))
     shinyjs::show("form")
+  })
+  
+  observe({toggleElement(id = "tool_owner_other",condition = input$tool_owner=="other")
+  })
+  
+  observe({toggleElement(id = "tool_user_other",condition = input$tool_user=="other")
+  })
+  
+  observe({toggleElement(id = "tool_location_other",condition = input$tool_location=="other")
   })
   
   observe({
@@ -142,6 +224,12 @@ shinyServer(function(input, output,session) {
   data_newtool_updatetool<-reactive({
     data <- sapply(fields_updatetool, function(x) input[[x]])
     data<-c(data,tool_date = humanTime())
+    data
+  })
+  
+  data_newtool_updatetool2<-reactive({
+    data <- sapply(fields_updatetool2, function(x) input[[x]])
+    data<-c(data,tool_date = humanTime(),tool_ID = table$tool_ID[input$tool_table_rows_selected])
     data
   })
   
