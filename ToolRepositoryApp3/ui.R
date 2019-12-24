@@ -63,7 +63,7 @@ shinyUI(fluidPage(
           h3(strong("Change Tool Status")),
           
           selectInput("tool_manufacturer_edit","Manufacturer",choices = c(""),selected = "Select One"),
-          textInput("tool_manufacture_edit_other",label = NULL,value=NULL),
+          textInput("tool_manufacturer_edit_other",label = NULL,value=NULL),
           
           textInput("tool_model_edit", "Model", ""),
           textInput("tool_name_edit", labelMandatory("Name"), ""),
@@ -75,20 +75,26 @@ shinyUI(fluidPage(
           textInput("tool_location_other_edit",value = "",label = NULL),
           h5(strong("Notes")),
           textOutput("tool_notes_output"),
-          textAreaInput("tool_notes_edit",label = NULL,value=""),
+          textAreaInput("tool_notes_edit",label = NULL,value=NULL),
           actionButton("submit_edit", "Submit", class = "btn-primary")
         )
       ),
-      
       hidden(
         div(
-          id = "thankyou_msg1",
-          h3("Thank you, you have sucessfully submitted your tool.  
-                             Click the refresh button and your tool will appear"),
-          actionLink("submit_another_tool","Submit Another Tool"),
-          
-        )
-      )
+          id="thankyou_msg2",
+          h3("You have sucessfully changed the tool status")
+        ))
+      
+      
+      # hidden(
+      #   div(
+      #     id = "thankyou_msg1",
+      #     h3("Thank you, you have sucessfully submitted your tool.  
+      #                        Click the refresh button and your tool will appear"),
+      #     actionLink("submit_another_tool","Submit Another Tool"),
+      #     
+      #   )
+      # )
     ),
     mainPanel(
       dataTableOutput("tool_table"),

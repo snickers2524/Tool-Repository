@@ -149,7 +149,7 @@ save_UpdatedtoolData<-function(table1 = "tools",table2="tools_current",data2){
 
 }
 
-#################################################################################################
+#########################################################################################################################################################################
 
 shinyServer(function(input, output,session) {
   table<-loadTable()
@@ -212,6 +212,8 @@ shinyServer(function(input, output,session) {
   
   observeEvent(input$submit_edit,{
     save_UpdatedtoolData(table2="tools_current",data2 = data_newtool_updatetool2())
+    hide("tooledit")
+    show("thankyou_msg2")
   })
 
   
@@ -270,9 +272,9 @@ shinyServer(function(input, output,session) {
     save_newtool("tools","tools_current",data_newtool(),data_newtool_updatetool())
     hide("form")
     reset("form")
-    show("thankyou_msg1")
+    show("test")
   })
-  # 
+
   # observeEvent(input$submit_another_tool,{
   #   hide("thankyou_msg1")
   #   show("form")
