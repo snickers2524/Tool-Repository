@@ -21,9 +21,7 @@ shinyServer(function(input, output,session) {
   })
   
   table<-loadTable()
-  print(fields_updatetool2)
   
-  # updateSelectInput(session,"tool_owner",selected = cols_specific(table,"tool_owner"))
   
   output$tool_table<-renderDataTable(
     DT::datatable(table[-1],
@@ -42,6 +40,7 @@ shinyServer(function(input, output,session) {
     # cat(input$tool_table_rows_selected, sep = ', ')
     # x<-fct_relevel(fct_c(factor("Select One"),factor("Other"),cols_specific(table,"tool_owner")),"Other",after=Inf)
     # print(x)
+    print(mandatoryFilled(input))
 
   })
   
@@ -156,6 +155,12 @@ shinyServer(function(input, output,session) {
     if (data[[2]]=="Other"){
       data[[2]]=input$tool_manufacturer_other
     }
+    if (data[[2]]=="Select One"){
+      data[[2]]="N/A"
+    }
+    if (data[[4]]=="Select One"){
+      data[[4]]="N/A"
+    }
     data
   })
   
@@ -169,7 +174,14 @@ shinyServer(function(input, output,session) {
     }
     if (data[[2]]=="Other"){
       data[[2]]=input$tool_user_other
+    } 
+    if (data[[1]]=="Select One"){
+      data[[1]]="N/A"
     }
+    if (data[[1]]=="Select One"){
+      data[[1]]="N/A"
+    }
+    
     data
   })
   
@@ -185,6 +197,12 @@ shinyServer(function(input, output,session) {
     }
     if (data[[2]]=="Other"){
       data[[2]]=input$tool_user_other_edit
+    }
+    if (data[[1]]=="Select One"){
+      data[[1]]="N/A"
+    }
+    if (data[[1]]=="Select One"){
+      data[[1]]="N/A"
     }
     data
   })

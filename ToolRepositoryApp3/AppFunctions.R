@@ -152,7 +152,7 @@ labelMandatory <- function(label) {
 appCSS <-
   ".mandatory_star { color: red; }"
 
-mandatoryFilled<-function(){
+mandatoryFilled<-function(input){
   test<-vector(length = length(fieldsMandatory))
   
   for (i in seq_along(fieldsMandatory)){
@@ -183,6 +183,8 @@ mandatoryFilled<-function(){
     }
     
   }
+  
+  print(test)
   
   return(all(test))
 }
