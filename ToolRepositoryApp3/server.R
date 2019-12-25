@@ -3,13 +3,23 @@ library(readr)
 library(dplyr)
 library(lubridate)
 library(forcats)
+library(shinymanager)
 
-
+source("Sensitive.R")
 source("AppFunctions.R")
 
 #########################################################################################################################################################################
 
 shinyServer(function(input, output,session) {
+  
+  res_auth <- secure_server(
+    check_credentials = check_credentials(credentials)
+  )
+  
+  output$auth_output <- renderPrint({
+    reactiveValuesToList(res_auth)
+  })
+  
   table<-loadTable()
   print(fields_updatetool2)
   

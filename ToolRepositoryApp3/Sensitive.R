@@ -1,7 +1,5 @@
-user_base <- data.frame(
-  user = c("user1", "user2"),
-  password = c("pass1", "pass2"), 
-  permissions = c("admin", "standard"),
-  name = c("User One", "User Two"),
+credentials <- data.frame(
+  user = c("thefam", "shinymanager"),
+  password = c("apple", "12345"),
   stringsAsFactors = FALSE
 )

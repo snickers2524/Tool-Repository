@@ -1,0 +1,12 @@
+name: testing
+title: testing
+username:
+account: avickars
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 1618346
+bundleId: 2690308
+url: https://avickars.shinyapps.io/testing/
+when: 1577234503.0194
+asMultiple: FALSE
+asStatic: FALSE

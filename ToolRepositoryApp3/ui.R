@@ -4,11 +4,18 @@ library(shinyBS)
 library(shinyjs)
 library(stringr)
 library(DT)
+library(shinymanager)
+
+source("Sensitive.R")
 
 
 source("AppFunctions.R")
 
-shinyUI(fluidPage(
+ui<-fluidPage(
+  
+  # tags$h2("My secure application"),
+  # verbatimTextOutput("auth_output"),
+  
   inlineCSS(appCSS),
   useShinyjs(),
   
@@ -97,4 +104,6 @@ shinyUI(fluidPage(
   
   
   
-))
+)
+
+ui<-secure_app(ui)
