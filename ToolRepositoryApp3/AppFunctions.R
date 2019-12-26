@@ -86,6 +86,7 @@ FROM
         tools_current
     GROUP BY tool_ID) AS t2 ON t1.tool_ID = t2.tool_ID) AS t4 ON t3.tool_ID = t4.tool_ID;"
   data<-dbGetQuery(conn, query)
+  dbDisconnect(conn)
   data
 }
 

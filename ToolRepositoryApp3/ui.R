@@ -5,6 +5,7 @@ library(shinyjs)
 library(stringr)
 library(DT)
 library(shinymanager)
+library(shinythemes)
 
 source("Sensitive.R")
 
@@ -12,6 +13,7 @@ source("Sensitive.R")
 source("AppFunctions.R")
 
 ui<-fluidPage(
+  theme = shinytheme("united"),
   
   # tags$h2("My secure application"),
   # verbatimTextOutput("auth_output"),
@@ -23,9 +25,11 @@ ui<-fluidPage(
   sidebarLayout(
     sidebarPanel(
       
-      
-      actionButton("tool_create","Create Tool",class="btn-primary"),
-      # actionButton("tool_edit","Edit Tool"),
+      fluidRow(
+        actionButton("tool_create","Create Tool",class="btn-primary")
+        ),
+      fluidRow(),
+   
       
       hidden(
         div(
@@ -75,29 +79,42 @@ ui<-fluidPage(
           h5(strong("Notes")),
           textOutput("tool_notes_output"),
           textAreaInput("tool_notes_edit",label = NULL,value=NULL),
-          actionButton("submit_edit", "Submit", class = "btn-primary")
+          actionButton("submit_edit", "Submit", class = "btn-primary"),
+          actionButton("cancel_edit","Cancel",class="btn-primary")
         )
       ),
       hidden(
         div(
           id="thankyou_msg2",
           h3("You have sucessfully changed the tool status")
+        )),
+      
+      hidden(
+        div(
+          id="cancel_msg",
+          h3("You have cancelled the tool submission")
+        )),
+      
+      hidden(
+        div(
+          id="cancel_msg2",
+          h3("You have cancelled the changed")
+        )),
+      
+      
+      hidden(
+        div(
+          id = "thankyou_msg1",
+          h3("Thank you, you have sucessfully submitted your tool.
+                             Click the refresh button and your tool will appear"),
+          actionLink("submit_another_tool","Submit Another Tool")
+
         ))
+      ),
       
-      
-      # hidden(
-      #   div(
-      #     id = "thankyou_msg1",
-      #     h3("Thank you, you have sucessfully submitted your tool.  
-      #                        Click the refresh button and your tool will appear"),
-      #     actionLink("submit_another_tool","Submit Another Tool"),
-      #     
-      #   )
-      # )
-    ),
     mainPanel(
       dataTableOutput("tool_table"),
-      verbatimTextOutput('x5')
+      # verbatimTextOutput('x5')
     )
   )
   
@@ -106,4 +123,5 @@ ui<-fluidPage(
   
 )
 
-ui<-secure_app(ui)
+# ui<-secure_app(ui)
+shinyUI(ui)
