@@ -12,31 +12,26 @@ source("AppFunctions.R")
 
 shinyServer(function(input, output,session) {
   
-  # res_auth <- secure_server(
-  #   check_credentials = check_credentials(credentials)
-  # )
-  # 
-  # output$auth_output <- renderPrint({
-  #   reactiveValuesToList(res_auth)
-  # })
-  # 
+
+  res_auth <- secure_server(
+    check_credentials = check_credentials(credentials)
+  )
+
+  output$auth_output <- renderPrint({
+    reactiveValuesToList(res_auth)
+  })
+
   table<-loadTable()
   
-  
-  # output$tool_table<-renderDataTable(
-  #   DT::datatable(table[-1],
-  #                 selection = "single",
-  #                 colnames = c("Manufacturer","Model","Name","Owner","Current User","Location","Notes"),
-  #                 filter = "top")
-  #                 )
-  
+
+
   output$tool_table<-renderDataTable(
     DT::datatable(loadTable()[-1],
                   selection = "single",
                   colnames = c("Manufacturer","Model","Name","Owner","Current User","Location","Notes"),
                   filter = "top")
   )
-  
+
   
   
   # output$x5 = renderPrint({
@@ -211,6 +206,9 @@ shinyServer(function(input, output,session) {
   observeEvent(input$submit_another_tool,{
     shinyjs::hide("thankyou_msg1")
     shinyjs::show("form")
+
+    shinyjs::show("submit")
+
   })
   
   data_newtool<-reactive({
