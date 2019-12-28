@@ -118,6 +118,49 @@ shinyServer(function(input, output,session) {
     shinyjs::hide("cancel_msg2")
   })
   
+  observe({
+    mandatoryFilled<-logical(length = length(fieldsMandatory))
+    if (!is.null(input$tool_name_edit)){
+      if (!is.null(input$tool_name_edit) & input$tool_name_edit!="")
+      {
+        mandatoryFilled[[1]]=TRUE
+      }
+    }
+    
+    if (!is.null(input$tool_owner_edit)){
+      if (input$tool_owner_edit != "Select One" & input$tool_owner_edit != "Other" ){
+        mandatoryFilled[[2]]=TRUE
+      }
+      
+      else if (input$tool_owner_edit == "Other" & (!is.null(input$tool_owner_other_edit) & input$tool_owner_other_edit!="")  ){
+        mandatoryFilled[[2]]=TRUE
+      }
+    }
+    
+    if (!is.null(input$tool_user_edit)){
+      if (input$tool_user_edit != "Select One" & input$tool_user_edit != "Other" ){
+        mandatoryFilled[[3]]=TRUE
+      }
+      
+      else if (input$tool_user_edit == "Other" & (!is.null(input$tool_user_other_edit) & input$tool_user_other_edit!="")  ){
+        mandatoryFilled[[3]]=TRUE
+      }
+    }
+    
+    if (!is.null(input$tool_location)){
+      if (input$tool_location_edit != "Select One" & input$tool_location_edit != "Other" ){
+        mandatoryFilled[[4]]=TRUE
+      }
+      
+      else if (input$tool_location_edit == "Other" & (!is.null(input$tool_location_other_edit) & input$tool_location_other_edit !="")  ){
+        mandatoryFilled[[4]]=TRUE
+      }
+    }
+    mandatoryFilled <- all(mandatoryFilled)
+    
+    shinyjs::toggleState(id = "submit_edit", condition = mandatoryFilled)
+  })
+  
   
   # New Tool Stuff
   observeEvent(input$tool_create,{
@@ -156,56 +199,9 @@ shinyServer(function(input, output,session) {
   observe({toggleElement(id = "tool_manufacturer_other",condition = input$tool_manufacturer=="Other")
   })
   
-  # observe({
-  #   # check if all mandatory fields have a value
-  #   mandatoryFilled <-
-  #     vapply(fieldsMandatory,
-  #            function(x) {
-  #              !is.null(input[[x]]) && input[[x]] != ""
-  #            },
-  #            logical(1))
-  #   mandatoryFilled <- all(mandatoryFilled)
-  #   
-  # 
-  #   
-  #   # enable/disable the submit button
-  #   shinyjs::toggleState(id = "submit", condition = mandatoryFilled)
-  # })
+ 
   
-  # submit_mandatoryfields<-reactive({
-  #   mandatoryFilled<-logical(length = length(fieldsMandatory))
-  # 
-  #   if (!is.null(input$tool_name) & input$tool_name!="")
-  #   {
-  #     mandatoryFilled[[1]]=TRUE
-  #   }
-  # 
-  #   if (input$tool_owner != "Select One" & input$tool_owner != "Other" ){
-  #     mandatoryFilled[[2]]=TRUE
-  #   }
-  # 
-  #   else if (input$tool_owner == "Other" & (!is.null(input$tool_owner_other) & input$tool_owner_other!="")  ){
-  #     mandatoryFilled[[2]]=TRUE
-  #   }
-  # 
-  #   if (input$tool_user != "Select One" & input$tool_user != "Other" ){
-  #     mandatoryFilled[[3]]=TRUE
-  #   }
-  # 
-  #   else if (input$tool_user == "Other" & (!is.null(input$tool_user_other) & input$tool_user_other!="")  ){
-  #     mandatoryFilled[[3]]=TRUE
-  #   }
-  # 
-  #   if (input$tool_location != "Select One" & input$tool_location != "Other" ){
-  #     mandatoryFilled[[4]]=TRUE
-  #   }
-  # 
-  #   else if (input$tool_location == "Other" & (!is.null(input$tool_location_other) & input$tool_location_other !="")  ){
-  #     mandatoryFilled[[4]]=TRUE
-  #   }
-  #   mandatoryFilled <- all(mandatoryFilled)
-  # 
-  # })
+  # Toggle Submit Button on Tool Creation
   
   observe({
     mandatoryFilled<-logical(length = length(fieldsMandatory))
