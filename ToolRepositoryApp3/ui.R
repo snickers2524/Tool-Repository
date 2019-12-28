@@ -114,7 +114,7 @@ ui<-fluidPage(
       
     mainPanel(
       dataTableOutput("tool_table"),
-      # verbatimTextOutput('x5')
+      verbatimTextOutput('x5')
     )
   )
   

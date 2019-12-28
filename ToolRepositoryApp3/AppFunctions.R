@@ -153,39 +153,4 @@ labelMandatory <- function(label) {
 appCSS <-
   ".mandatory_star { color: red; }"
 
-mandatoryFilled<-function(input){
-  test<-vector(length = length(fieldsMandatory))
-  
-  for (i in seq_along(fieldsMandatory)){
-    
-    if (fieldsMandatory[i]=="tool_name"){
-      
-      if (is.null(input$tool_name)){
-        test[i]=FALSE
-      } else {test[i]=TRUE}
-    }
-    
-    if (fieldsMandatory[i]=="tool_owner"){
-      if (input$tool_owner=="Select One" & is.null(input$tool_owner_other)){
-        test[i]=FALSE
-      } else test[i]=TRUE
-    }
-    
-    if (fieldsMandatory[i]=="tool_user"){
-      if (input$tool_owner=="Select One" & is.null(input$tool_user_other)){
-        test[i]=FALSE
-      } else test[i]=TRUE
-    }
-    
-    if (fieldsMandatory[i]=="tool_location"){
-      if (input$tool_owner=="Select One" & is.null(input$tool_location_other)){
-        test[i]=FALSE
-      } else test[i]=TRUE
-    }
-    
-  }
-  
-  print(test)
-  
-  return(all(test))
-}
+
